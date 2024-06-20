@@ -27,6 +27,14 @@ def save_data(new_data):
 def dict_to_tuple(location_dict):
     return (location_dict['lat'], location_dict['lng'])
 
+# Add logo to the upper right corner
+logo = '''
+<div style="text-align: right;">
+<img src="https://bestofworlds.se/img/BoWlogo.png" width="150px">
+</div>
+'''
+st.markdown(logo, unsafe_allow_html=True)
+
 # App title and description
 st.title("Summer Vacation Destination Map")
 st.markdown("""
