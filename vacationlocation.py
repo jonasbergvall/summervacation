@@ -3,25 +3,27 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 import json
-import os
+import requests
 
-# Initialize JSON file if it doesn't exist
-DATA_FILE = 'vacation_data.json'
-if not os.path.exists(DATA_FILE):
-    with open(DATA_FILE, 'w') as f:
-        json.dump([], f)
+# URL of the JSON file on the webserver
+DATA_URL = 'https://www.bestofworlds.se/vacationlocation/vacation_data.json'
 
-# Load existing data
+# Load existing data from the webserver
 def load_data():
-    with open(DATA_FILE, 'r') as f:
-        return json.load(f)
+    response = requests.get(DATA_URL)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error(f"Failed to load data. HTTP status code: {response.status_code}")
+        return []
 
-# Save new data
+# Save new data to the webserver (This requires an API endpoint on the server to handle POST requests)
 def save_data(new_data):
     data = load_data()
     data.append(new_data)
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f)
+    response = requests.post(DATA_URL, json=data)
+    if response.status_code != 200:
+        st.error(f"Failed to save data. HTTP status code: {response.status_code}")
 
 # Convert location dictionary to tuple
 def dict_to_tuple(location_dict):
