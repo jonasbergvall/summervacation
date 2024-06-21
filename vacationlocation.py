@@ -46,18 +46,6 @@ st.markdown("""
     Your input will help us create an aggregated map of vacation destinations and travel modes.
 """)
 
-# Sidebar for travel mode selection and form submission
-st.sidebar.header("Select Your Travel Mode. 
-    1. Click on your destination on the map.
-    2. Select how you will travel in the panel.
-    3. Click Submit and the map is updated.")
-with st.sidebar.form(key='travel_form'):
-    travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
-    submit_button = st.form_submit_button(label='Submit')
-
-# Create columns for layout
-col1, col2 = st.columns([3, 1])
-
 # Initialize map
 m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
 
@@ -76,6 +64,9 @@ def add_data_to_map(map_obj, data):
 data = load_data()
 add_data_to_map(m, data)
 
+# Create columns for layout
+col1, col2 = st.columns([3, 1])
+
 with col1:
     # Display map and capture clicks
     map_data = st_folium(m, width=700, height=500, key="initial_map")
@@ -85,7 +76,14 @@ with col1:
         st.session_state.clicked_point = map_data['last_clicked']
         st.write("Destination Selected:", st.session_state.clicked_point)
 
-        if submit_button and st.session_state.clicked_point:
+# Sidebar for travel mode selection and form submission, displayed only if a point is clicked
+if 'clicked_point' in st.session_state and st.session_state.clicked_point:
+    st.sidebar.header("Select Your Travel Mode")
+    with st.sidebar.form(key='travel_form'):
+        travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
+        submit_button = st.form_submit_button(label='Submit')
+
+        if submit_button:
             destination = st.session_state.clicked_point
             new_entry = {"destination": destination, "travel_mode": travel_mode}
             save_data(new_entry)
