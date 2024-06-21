@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import folium
 from streamlit_folium import st_folium
 import json
 import os
@@ -89,9 +88,7 @@ with col1:
             m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
             data = load_data()
             add_data_to_map(m, data)
-
-    # Re-render the map
-    st_folium(m, width=700, height=500)
+            map_data = st_folium(m, width=700, height=500)  # Update map_data to re-render
 
 with col2:
     # Display travel mode counts
