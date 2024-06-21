@@ -48,7 +48,7 @@ col1, col2 = st.columns([2, 1])
 
 with col1:
     # Initialize map
-    m = folium.Map(location=[20, 0], zoom_start=2)
+    m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
 
     # Function to add existing data to the map
     def add_data_to_map(map_obj, data):
@@ -82,7 +82,7 @@ with col1:
             st.session_state.clicked_point = None  # Clear point after submission
 
             # Re-render the map with the new marker
-            m = folium.Map(location=[20, 0], zoom_start=2)
+            m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
             data = load_data()
             add_data_to_map(m, data)
 
