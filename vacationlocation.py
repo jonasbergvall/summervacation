@@ -76,8 +76,11 @@ with col1:
         st.session_state.clicked_point = map_data['last_clicked']
         st.write("Destination Selected:", st.session_state.clicked_point)
         
-        travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
-        if st.button("Submit"):
+        with st.form(key='travel_form'):
+            travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
+            submit_button = st.form_submit_button(label='Submit')
+
+        if submit_button:
             destination = st.session_state.clicked_point
             new_entry = {"destination": destination, "travel_mode": travel_mode}
             save_data(new_entry)
