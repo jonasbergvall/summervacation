@@ -5,8 +5,8 @@ from streamlit_folium import st_folium
 import json
 import requests
 
-# URL of the JSON file on the webserver
-DATA_URL = 'https://www.bestofworlds.se/vacationlocation/vacation_data.json'
+# URL of the backend API endpoint
+DATA_URL = 'https://www.bestofworlds.se/vacationlocation/vacation_data.php'
 
 # Load existing data from the webserver
 def load_data():
@@ -17,12 +17,10 @@ def load_data():
         st.error(f"Failed to load data. HTTP status code: {response.status_code}")
         return []
 
-# Save new data to the webserver (This requires an API endpoint on the server to handle POST requests)
+# Save new data to the webserver
 def save_data(new_data):
-    data = load_data()
-    data.append(new_data)
     headers = {'Content-Type': 'application/json'}
-    response = requests.post(DATA_URL, data=json.dumps(data), headers=headers)
+    response = requests.post(DATA_URL, json=new_data, headers=headers)
     if response.status_code != 200:
         st.error(f"Failed to save data. HTTP status code: {response.status_code}")
     else:
