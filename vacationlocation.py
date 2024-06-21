@@ -68,7 +68,7 @@ with col1:
     add_data_to_map(m, data)
 
     # Display map and capture clicks
-    map_data = st_folium(m, width=700, height=500)
+    map_data = st_folium(m, width=700, height=500, key="initial_map")
 
     # Handle map clicks
     if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
@@ -95,7 +95,7 @@ with col1:
             m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
             data = load_data()
             add_data_to_map(m, data)
-            st_folium(m, width=700, height=500)  # Re-render map with updated data
+            st_folium(m, width=700, height=500, key="updated_map")  # Re-render map with updated data
 
 with col2:
     # Display travel mode counts
