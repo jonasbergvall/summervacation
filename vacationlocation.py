@@ -46,29 +46,27 @@ st.markdown("""
 # Create columns for layout
 col1, col2 = st.columns([2, 1])
 
-with col1:
+def create_map():
     # Initialize map
     m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
-
-    # Function to add existing data to the map
-    def add_data_to_map(map_obj, data):
-        for entry in data:
-            if 'destination' in entry and 'travel_mode' in entry:
-                destination = dict_to_tuple(entry['destination'])
-                folium.Marker(
-                    location=destination,
-                    popup=f"Destination ({entry['travel_mode']})",
-                    icon=folium.Icon(icon='info-sign')
-                ).add_to(map_obj)
-
+    
     # Load and display existing data
     data = load_data()
-    add_data_to_map(m, data)
+    for entry in data:
+        if 'destination' in entry and 'travel_mode' in entry:
+            destination = dict_to_tuple(entry['destination'])
+            folium.Marker(
+                location=destination,
+                popup=f"Destination ({entry['travel_mode']})",
+                icon=folium.Icon(icon='info-sign')
+            ).add_to(m)
+    
+    return m
 
-    # Display map and capture clicks
+with col1:
+    m = create_map()
     map_data = st_folium(m, width=700, height=500)
 
-    # Handle map clicks
     if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
         if 'clicked_point' not in st.session_state:
             st.session_state.clicked_point = None
@@ -85,11 +83,9 @@ with col1:
             st.success("Thank you for your input!")
             st.session_state.clicked_point = None  # Clear point after submission
 
-            # Re-render the map with the new marker
-            m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
-            data = load_data()
-            add_data_to_map(m, data)
-            map_data = st_folium(m, width=700, height=500)  # Update map_data to re-render
+            # Re-create the map with the new marker
+            m = create_map()
+            st_folium(m, width=700, height=500)  # Re-render map with updated data
 
 with col2:
     # Display travel mode counts
