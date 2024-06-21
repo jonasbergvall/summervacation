@@ -46,8 +46,14 @@ st.markdown("""
     Your input will help us create an aggregated map of vacation destinations and travel modes.
 """)
 
+# Sidebar for travel mode selection and form submission
+st.sidebar.header("Select Your Travel Mode")
+with st.sidebar.form(key='travel_form'):
+    travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
+    submit_button = st.form_submit_button(label='Submit')
+
 # Create columns for layout
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([3, 1])
 
 # Initialize map
 m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
@@ -68,35 +74,26 @@ data = load_data()
 add_data_to_map(m, data)
 
 with col1:
-    map_container = st.container()
-    with map_container:
-        # Display map and capture clicks
-        map_data = st_folium(m, width=700, height=500, key="initial_map")
+    # Display map and capture clicks
+    map_data = st_folium(m, width=700, height=500, key="initial_map")
 
-        # Handle map clicks
-        if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
-            st.session_state.clicked_point = map_data['last_clicked']
-            st.write("Destination Selected:", st.session_state.clicked_point)
+    # Handle map clicks
+    if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
+        st.session_state.clicked_point = map_data['last_clicked']
+        st.write("Destination Selected:", st.session_state.clicked_point)
 
-            # Input form under the map
-            form_container = st.container()
-            with form_container:
-                with st.form(key='travel_form'):
-                    travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
-                    submit_button = st.form_submit_button(label='Submit')
+        if submit_button and st.session_state.clicked_point:
+            destination = st.session_state.clicked_point
+            new_entry = {"destination": destination, "travel_mode": travel_mode}
+            save_data(new_entry)
+            
+            st.session_state.clicked_point = None  # Clear point after submission
 
-                if submit_button and st.session_state.clicked_point:
-                    destination = st.session_state.clicked_point
-                    new_entry = {"destination": destination, "travel_mode": travel_mode}
-                    save_data(new_entry)
-                    
-                    st.session_state.clicked_point = None  # Clear point after submission
-
-                    # Re-render the map with the new marker
-                    m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
-                    data = load_data()
-                    add_data_to_map(m, data)
-                    st_folium(m, width=700, height=500, key="updated_map")  # Re-render map with updated data
+            # Re-render the map with the new marker
+            m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
+            data = load_data()
+            add_data_to_map(m, data)
+            st_folium(m, width=700, height=500, key="updated_map")  # Re-render map with updated data
 
 with col2:
     # Display travel mode counts
