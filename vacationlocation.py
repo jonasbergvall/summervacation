@@ -85,7 +85,9 @@ with col1:
             m = folium.Map(location=[20, 0], zoom_start=2)
             data = load_data()
             add_data_to_map(m, data)
-            st_folium(m, width=700, height=500)
+
+    # Re-render the map
+    st_folium(m, width=700, height=500)
 
 with col2:
     # Display travel mode counts
