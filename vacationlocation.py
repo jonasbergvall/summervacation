@@ -21,9 +21,12 @@ def load_data():
 def save_data(new_data):
     data = load_data()
     data.append(new_data)
-    response = requests.post(DATA_URL, json=data)
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(DATA_URL, data=json.dumps(data), headers=headers)
     if response.status_code != 200:
         st.error(f"Failed to save data. HTTP status code: {response.status_code}")
+    else:
+        st.success("Data saved successfully!")
 
 # Convert location dictionary to tuple
 def dict_to_tuple(location_dict):
@@ -85,7 +88,6 @@ with col1:
             new_entry = {"destination": destination, "travel_mode": travel_mode}
             save_data(new_entry)
             
-            st.success("Thank you for your input!")
             st.session_state.clicked_point = None  # Clear point after submission
 
             # Re-render the map with the new marker
