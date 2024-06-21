@@ -47,7 +47,10 @@ st.markdown("""
 """)
 
 # Sidebar for travel mode selection and form submission
-st.sidebar.header("Select Your Travel Mode")
+st.sidebar.header("Select Your Travel Mode. 
+    1. Click on your destination on the map.
+    2. Select how you will travel in the panel.
+    3. Click Submit and the map is updated.")
 with st.sidebar.form(key='travel_form'):
     travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
     submit_button = st.form_submit_button(label='Submit')
