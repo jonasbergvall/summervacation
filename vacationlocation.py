@@ -55,7 +55,11 @@ with col1:
         for entry in data:
             if 'destination' in entry and 'travel_mode' in entry:
                 destination = dict_to_tuple(entry['destination'])
-                folium.Marker(location=destination, popup=f"Destination ({entry['travel_mode']})").add_to(map_obj)
+                folium.Marker(
+                    location=destination,
+                    popup=f"Destination ({entry['travel_mode']})",
+                    icon=folium.Icon(icon='info-sign')
+                ).add_to(map_obj)
 
     # Load and display existing data
     data = load_data()
@@ -85,7 +89,9 @@ with col1:
             m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
             data = load_data()
             add_data_to_map(m, data)
-            st_folium(m, width=700, height=500)
+
+    # Re-render the map
+    st_folium(m, width=700, height=500)
 
 with col2:
     # Display travel mode counts
