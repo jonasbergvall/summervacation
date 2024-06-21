@@ -48,33 +48,30 @@ st.markdown("""
 # Create columns for layout
 col1, col2 = st.columns([2, 1])
 
+# Initialize map
+m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
+
+# Function to add existing data to the map
+def add_data_to_map(map_obj, data):
+    for entry in data:
+        if 'destination' in entry and 'travel_mode' in entry:
+            destination = dict_to_tuple(entry['destination'])
+            folium.Marker(
+                location=destination,
+                popup=f"Destination ({entry['travel_mode']})",
+                icon=folium.Icon(icon='info-sign')
+            ).add_to(map_obj)
+
+# Load and display existing data
+data = load_data()
+add_data_to_map(m, data)
+
 with col1:
-    # Initialize map
-    m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
-
-    # Function to add existing data to the map
-    def add_data_to_map(map_obj, data):
-        for entry in data:
-            if 'destination' in entry and 'travel_mode' in entry:
-                destination = dict_to_tuple(entry['destination'])
-                folium.Marker(
-                    location=destination,
-                    popup=f"Destination ({entry['travel_mode']})",
-                    icon=folium.Icon(icon='info-sign')
-                ).add_to(map_obj)
-
-    # Load and display existing data
-    data = load_data()
-    add_data_to_map(m, data)
-
     # Display map and capture clicks
     map_data = st_folium(m, width=700, height=500, key="initial_map")
 
     # Handle map clicks
     if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
-        if 'clicked_point' not in st.session_state:
-            st.session_state.clicked_point = None
-
         st.session_state.clicked_point = map_data['last_clicked']
         st.write("Destination Selected:", st.session_state.clicked_point)
 
@@ -83,7 +80,7 @@ with col1:
             travel_mode = st.selectbox("Select your mode of travel:", ["Flight", "Car", "Bike", "Other"])
             submit_button = st.form_submit_button(label='Submit')
 
-        if submit_button:
+        if submit_button and st.session_state.clicked_point:
             destination = st.session_state.clicked_point
             new_entry = {"destination": destination, "travel_mode": travel_mode}
             save_data(new_entry)
