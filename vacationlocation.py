@@ -57,7 +57,8 @@ with col1:
                 destination = dict_to_tuple(entry['destination'])
                 folium.Marker(
                     location=destination,
-                    popup=f"Destination ({entry['travel_mode']})"
+                    popup=f"Destination ({entry['travel_mode']})",
+                    icon=folium.Icon(icon='info-sign')
                 ).add_to(map_obj)
 
     # Load and display existing data
