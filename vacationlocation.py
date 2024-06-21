@@ -47,7 +47,11 @@ st.markdown("""
 """)
 
 # Initialize map
-m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
+def create_map():
+    m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
+    data = load_data()
+    add_data_to_map(m, data)
+    return m
 
 # Function to add existing data to the map
 def add_data_to_map(map_obj, data):
@@ -60,16 +64,12 @@ def add_data_to_map(map_obj, data):
                 icon=folium.Icon(icon='info-sign')
             ).add_to(map_obj)
 
-# Load and display existing data
-data = load_data()
-add_data_to_map(m, data)
-
 # Create columns for layout
 col1, col2 = st.columns([3, 1])
 
 with col1:
     # Display map and capture clicks
-    map_data = st_folium(m, width=700, height=500, key="initial_map")
+    map_data = st_folium(create_map(), width=700, height=500, key="initial_map")
 
     # Handle map clicks
     if map_data and 'last_clicked' in map_data and map_data['last_clicked']:
@@ -91,10 +91,7 @@ if 'clicked_point' in st.session_state and st.session_state.clicked_point:
             st.session_state.clicked_point = None  # Clear point after submission
 
             # Re-render the map with the new marker
-            m = folium.Map(location=[20, 0], zoom_start=2, tiles='OpenStreetMap')
-            data = load_data()
-            add_data_to_map(m, data)
-            st_folium(m, width=700, height=500, key="updated_map")  # Re-render map with updated data
+            st.experimental_rerun()  # Rerun the app to refresh the map
 
 with col2:
     # Display travel mode counts
