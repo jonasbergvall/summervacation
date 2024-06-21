@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import folium
 from streamlit_folium import st_folium
 import json
 import os
@@ -56,8 +57,7 @@ with col1:
                 destination = dict_to_tuple(entry['destination'])
                 folium.Marker(
                     location=destination,
-                    popup=f"Destination ({entry['travel_mode']})",
-                    icon=folium.Icon(icon='info-sign')
+                    popup=f"Destination ({entry['travel_mode']})"
                 ).add_to(map_obj)
 
     # Load and display existing data
